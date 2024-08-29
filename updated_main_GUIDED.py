@@ -160,6 +160,19 @@ class PixhawkAction:
 
             time.sleep(1)
 
+    def send_ned_velocity(velocity_x, velocity_y, velocity_z, duration):
+        """
+        Move vehicle in direction based on specified velocity vectors.
+        """
+        msg = vehicle.message_factory.set_position_target_local_ned_encode(
+            0, 0, 0, mavutil.mavlink.MAV_FRAME_BODY_NED,
+            0b0000111111000111, 0, 0, 0,
+            velocity_x, velocity_y, velocity_z, 0, 0, 0, 0, 0)
+
+        for x in range(0, duration):
+            vehicle.send_mavlink(msg)
+            time.sleep(1)
+
     def landing(self):
         if not self.vehicle.armed:
             print("Vehicle is not armed. No need to land.")
@@ -189,7 +202,7 @@ def main():
 
     pixhawk_data = PixhawkData(vehicle)
     pixhawk_action = PixhawkAction(vehicle)
-
+    send_ned_velocity(1, 0, 0, 10)
     takeoff_executed = False
     landing_executed = False
     previous_mode = ""
